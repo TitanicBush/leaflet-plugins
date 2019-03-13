@@ -140,6 +140,7 @@ L.Util.extend(L.KML, {
 					var value = e.childNodes[0].nodeValue;
 					if (key === 'color') {
 						options.opacity = parseInt(value.substring(0, 2), 16) / 255.0;
+						options.opacity *= .3;
 						options.color = '#' + value.substring(6, 8) + value.substring(4, 6) + value.substring(2, 4);
 					} else if (key === 'width') {
 						options.weight = value;
@@ -211,8 +212,10 @@ L.Util.extend(L.KML, {
 		el = xml.getElementsByTagName('Placemark');
 		for (var j = 0; j < el.length; j++) {
 			if (!this._check_folder(el[j], xml)) { continue; }
-			l = this.parsePlacemark(el[j], xml, style);
-			if (l) { layers.push(l); }
+			if (!el[j].getElementsByTagName('styleUrl')[0].innerHTML.includes("#pt")) {
+			  l = this.parsePlacemark(el[j], xml, style);
+  			  if (l) { layers.push(l); }
+		  }
 		}
 		el = xml.getElementsByTagName('GroundOverlay');
 		for (var k = 0; k < el.length; k++) {
@@ -288,7 +291,8 @@ L.Util.extend(L.KML, {
 
 		if (name) {
 			layer.on('add', function () {
-				layer.bindPopup('<h2>' + name + '</h2>' + descr);
+				layer.bindPopup('<dt>Forecast</dt><dd>' + name + '</dd>');
+				//layer.bindPopup('<h5 class="text-center;" style="width:100%;margin-top:1.5em;margin-left:auto;margin-right:-.85em;">' + 'Precip:' + '</h5>' + name);
 			});
 		}
 
